@@ -57,3 +57,37 @@ func (p *TimesPredicate) Apply(report WorkReport) bool {
 	atomic.AddUint64(p.counter, 1)
 	return b
 }
+
+type ParallelFlowReport struct {
+	ctx     context.Context
+	reports []WorkReport
+}
+
+func NewParallelFlowReport(reports []WorkReport) ParallelFlowReport {
+	return ParallelFlowReport{
+		reports: reports,
+	}
+}
+
+func (r ParallelFlowReport) Status() WorkStatus {
+	for _, report := range r.reports {
+		if report.Status() == FAILED {
+			return FAILED
+		}
+	}
+	return COMPLETED
+}
+
+func (r ParallelFlowReport) WorkContext() context.Context {
+	return r.ctx
+}
+
+func (r ParallelFlowReport) Error() error {
+	for _, report := range r.reports {
+		if err := report.Error(); err != nil {
+			return report.Error()
+		}
+	}
+	return nil
+}
+

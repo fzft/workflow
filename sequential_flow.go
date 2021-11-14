@@ -2,19 +2,19 @@ package workflow
 
 import "context"
 
-type NameStep interface {
-	Named(name string) ExecuteStep
+type SequentialNameStep interface {
+	Named(name string) SequentialExecuteStep
 }
 
-type ThenStep interface {
-	ThenOne(nextWork Work) ThenStep
-	ThenUnits(nextWorkUnits []Work) ThenStep
+type SequentialThenStep interface {
+	ThenOne(nextWork Work) SequentialThenStep
+	ThenUnits(nextWorkUnits []Work) SequentialThenStep
 	Build() WorkFlow
 }
 
-type ExecuteStep interface {
-	ExecuteOne(initialWork Work) ThenStep
-	ExecuteUnits(initialWorkUnits []Work) ThenStep
+type SequentialExecuteStep interface {
+	ExecuteOne(initialWork Work) SequentialThenStep
+	ExecuteUnits(initialWorkUnits []Work) SequentialThenStep
 }
 
 type SequentialFlow struct {
@@ -31,7 +31,7 @@ func (s *SequentialFlow) Name() string {
 }
 
 
-func (s *SequentialFlow) Named(name string) ExecuteStep {
+func (s *SequentialFlow) Named(name string) SequentialExecuteStep {
 	s.name = name
 	return s
 }
@@ -47,24 +47,24 @@ func (s *SequentialFlow) Execute(ctx context.Context) WorkReport {
 	return wr
 }
 
-func (s *SequentialFlow) ExecuteOne(w Work) ThenStep {
+func (s *SequentialFlow) ExecuteOne(w Work) SequentialThenStep {
 	s.WorkUints = append(s.WorkUints, w)
 	return s
 }
 
-func (s *SequentialFlow) ExecuteUnits(ws []Work) ThenStep {
+func (s *SequentialFlow) ExecuteUnits(ws []Work) SequentialThenStep {
 	for _, w := range ws {
 		s.WorkUints = append(s.WorkUints, w)
 	}
 	return s
 }
 
-func (s *SequentialFlow) ThenOne(initialWork Work) ThenStep {
+func (s *SequentialFlow) ThenOne(initialWork Work) SequentialThenStep {
 	s.WorkUints = append(s.WorkUints, initialWork)
 	return s
 }
 
-func (s *SequentialFlow) ThenUnits(nextWorkUnits []Work) ThenStep {
+func (s *SequentialFlow) ThenUnits(nextWorkUnits []Work) SequentialThenStep {
 	for _, w := range nextWorkUnits {
 		s.WorkUints = append(s.WorkUints, w)
 	}

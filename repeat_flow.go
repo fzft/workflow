@@ -8,12 +8,12 @@ type RepeatNameStep interface {
 }
 
 type RepeatStep interface {
-	Repeat(work Work) UntilStep
+	Repeat(work Work) RepeatUntilStep
 }
 
-type UntilStep interface {
-	Until(p WorkReportPredicate) UntilStep
-	Times(times uint64) UntilStep
+type RepeatUntilStep interface {
+	Until(p WorkReportPredicate) RepeatUntilStep
+	Times(times uint64) RepeatUntilStep
 	Build() WorkFlow
 }
 
@@ -46,17 +46,17 @@ func (f *RepeatFlow) Named(name string) RepeatStep {
 	return f
 }
 
-func (f *RepeatFlow) Repeat(work Work) UntilStep {
+func (f *RepeatFlow) Repeat(work Work) RepeatUntilStep {
 	f.work = work
 	return f
 }
 
-func (f *RepeatFlow) Until(p WorkReportPredicate) UntilStep {
+func (f *RepeatFlow) Until(p WorkReportPredicate) RepeatUntilStep {
 	f.workReportPredicate = p
 	return f
 }
 
-func (f *RepeatFlow) Times(times uint64) UntilStep {
+func (f *RepeatFlow) Times(times uint64) RepeatUntilStep {
 	f.Until(NewTimesPredicate(times))
 	return f
 }
