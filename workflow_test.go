@@ -31,8 +31,15 @@ func TestWorkFlow_Execute(t *testing.T) {
 	workflow := NewSequentialFlow()
 
 	workflow.Named("seq").
-		ExecuteOne(NewRepeatFlow().Named("print foo 3 times").Repeat(NewPrintMessageWork("foo")).Times(3).Build()).
-		ThenOne(NewParallelFlow().Named("print hello and world in parallel").ExecuteAll(NewPrintMessageWork("hello"), NewPrintMessageWork("world")).With(NewParallelFlowExecutor()).Build()).
+		ExecuteOne(NewRepeatFlow().Named("print foo 3 times").
+			Repeat(NewPrintMessageWork("foo")).
+			Times(3).
+			Build()).
+		ThenOne(NewParallelFlow().
+			Named("print hello and world in parallel").
+			ExecuteAll(NewPrintMessageWork("hello"), NewPrintMessageWork("world")).
+			With(NewParallelFlowExecutor()).
+			Build()).
 		Build()
 
 
