@@ -8,9 +8,9 @@ type WorkStatus int64
 
 const (
 	IDLE      WorkStatus = iota
-	RUNNING   WorkStatus = iota + 1
-	COMPLETED WorkStatus = iota + 2
-	FAILED    WorkStatus = iota + 3
+	RUNNING
+	COMPLETED
+	FAILED
 )
 
 type Work interface {

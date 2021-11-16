@@ -35,14 +35,21 @@ func NewParallelFlowExecutor() *ParallelFlowExecutor {
 func (e *ParallelFlowExecutor) Execute(ctx context.Context, workUnits []Work) []WorkReport {
 	wg := sync.WaitGroup{}
 	wrs := make([]WorkReport, len(workUnits))
+	var m sync.Map
 	for i, w := range workUnits {
 		wg.Add(1)
-		go func(work Work) {
+		go func(work Work, idx int) {
 			defer wg.Done()
 			wr := work.Execute(ctx)
-			wrs[i] = wr
-		}(w)
+			m.Store(idx, wr)
+		}(w, i)
 	}
 	wg.Wait()
+	m.Range(func(k, v interface{}) bool {
+		idx := k.(int)
+		wpv := v.(WorkReport)
+		wrs[idx] = wpv
+		return true
+	})
 	return wrs
 }

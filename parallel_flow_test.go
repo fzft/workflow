@@ -2,6 +2,7 @@ package workflow
 
 import (
 	"context"
+	"fmt"
 	"testing"
 )
 
@@ -11,10 +12,10 @@ func TestParallelFlow_Execute(t *testing.T) {
 	workflow.
 		Named("bar").
 		ExecuteAll(NewPrintMessageWork("hello"),
-				NewPrintMessageWork("foo")).
+			NewPrintMessageWork("foo")).
 		With(NewParallelFlowExecutor()).
 		Build()
 	engine := NewEngine()
-	engine.Run(workflow, ctx)
-	//fmt.Println(workReport.Status())
+	workReport := engine.Run(workflow, ctx)
+	fmt.Println(workReport.Status())
 }

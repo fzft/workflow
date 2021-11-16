@@ -1,6 +1,8 @@
 package workflow
 
-import "context"
+import (
+	"context"
+)
 
 type ParallelNameStep interface {
 	Named(name string) ParallelExecuteStep
